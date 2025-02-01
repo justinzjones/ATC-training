@@ -1,0 +1,318 @@
+{
+    "Airports": [
+        {
+            "ICAO": "KFTW",
+            "IATA": "FTW",
+            "Name": "Fort Worth Meacham International Airport",
+            "ShortName": "Meacham",
+            "Elevation": 710,
+            "IsControlled": true,
+            "Ground_Frequencies": {
+                "Ground": "121.7",
+                "Tower": "118.6",
+                "Clearance": "118.6"
+            },
+            "Runways": [
+                {
+                    "Identifier": "16/34",
+                    "Length": 7501,
+                    "Width": 150,
+                    "Surface": "Asphalt"
+                },
+                {
+                    "Identifier": "17/35",
+                    "Length": 4005,
+                    "Width": 75,
+                    "Surface": "Asphalt"
+                }
+            ],
+            "Taxiways": [
+                {
+                    "Identifier": "A",
+                    "Description": "Main north-south taxiway parallel to Runway 16/34"
+                },
+                {
+                    "Identifier": "B",
+                    "Description": "East-west taxiway connecting ramps to Runway 16/34"
+                }
+            ],
+            "FBOs": [
+                {
+                    "Name": "American Aero",
+                    "Location": "West Ramp",
+                    "AccessVia": ["Taxiway A"]
+                },
+                {
+                    "Name": "Texas Jet",
+                    "Location": "East Ramp",
+                    "AccessVia": ["Taxiway B"]
+                }
+            ],
+            "CommonLocations": [
+                "North Ramp",
+                "South Ramp",
+                "Main Ramp",
+                "Terminal Ramp",
+                "Transient Parking"
+            ]
+        },
+        {
+            "ICAO": "KBOS",
+            "IATA": "BOS",
+            "Name": "Boston Logan International Airport",
+            "ShortName": "Boston",
+            "Elevation": 20,
+            "IsControlled": true,
+            "Ground_Frequencies": {
+                "Ground": "121.9",
+                "Tower": "128.8",
+                "Clearance": "132.075"
+            },
+            "Runways": [
+                {
+                    "Identifier": "04L/22R",
+                    "Length": 7861,
+                    "Width": 150,
+                    "Surface": "Asphalt/Concrete"
+                },
+                {
+                    "Identifier": "04R/22L",
+                    "Length": 10005,
+                    "Width": 150,
+                    "Surface": "Asphalt/Concrete"
+                },
+                {
+                    "Identifier": "09/27",
+                    "Length": 7000,
+                    "Width": 150,
+                    "Surface": "Asphalt"
+                }
+            ],
+            "Taxiways": [
+                {
+                    "Identifier": "B",
+                    "Description": "Main north-south taxiway serving terminals"
+                },
+                {
+                    "Identifier": "M",
+                    "Description": "Outer taxiway connecting runways"
+                }
+            ],
+            "FBOs": [
+                {
+                    "Name": "Signature Flight Support",
+                    "Location": "East Ramp",
+                    "AccessVia": ["Taxiway B"]
+                }
+            ],
+            "CommonRoutes": [
+                {
+                    "From": "Signature",
+                    "To": "Runway 04L",
+                    "Instructions": "Taxi via B, M to Runway 04L",
+                    "Hotspots": ["Runway 09/27 intersection"]
+                }
+            ]
+        },
+        {
+            "ICAO": "KDFW",
+            "IATA": "DFW",
+            "Name": "Dallas/Fort Worth International Airport",
+            "ShortName": "DFW",
+            "Elevation": 607,
+            "IsControlled": true,
+            "Ground_Frequencies": {
+                "Ground": ["121.8", "121.65", "121.85"],
+                "Tower": ["124.15", "127.5"],
+                "Clearance": "128.25"
+            },
+            "Runways": [
+                {
+                    "Identifier": "17R/35L",
+                    "Length": 13401,
+                    "Width": 200,
+                    "Surface": "Concrete"
+                },
+                {
+                    "Identifier": "17C/35C",
+                    "Length": 13401,
+                    "Width": 200,
+                    "Surface": "Concrete"
+                }
+            ],
+            "Taxiways": [
+                {
+                    "Identifier": "A",
+                    "Description": "East side parallel taxiway"
+                },
+                {
+                    "Identifier": "ER",
+                    "Description": "East ramp taxiway"
+                }
+            ],
+            "FBOs": [
+                {
+                    "Name": "Signature DFW",
+                    "Location": "East Side",
+                    "AccessVia": ["Taxiway ER"]
+                }
+            ],
+            "CommonRoutes": [
+                {
+                    "From": "Signature",
+                    "To": "Runway 17R",
+                    "Instructions": "Taxi via ER, A to Runway 17R",
+                    "Hotspots": ["Terminal B crossing"]
+                }
+            ]
+        },
+        {
+            "ICAO": "KAUS",
+            "IATA": "AUS",
+            "Name": "Austin-Bergstrom International Airport",
+            "ShortName": "Austin",
+            "Elevation": 542,
+            "IsControlled": true,
+            "Ground_Frequencies": {
+                "Ground": "121.7",
+                "Tower": "128.25",
+                "Clearance": "118.0"
+            },
+            "Runways": [
+                {
+                    "Identifier": "17L/35R",
+                    "Length": 9000,
+                    "Width": 150,
+                    "Surface": "Concrete"
+                },
+                {
+                    "Identifier": "17R/35L",
+                    "Length": 12250,
+                    "Width": 150,
+                    "Surface": "Concrete"
+                }
+            ],
+            "Taxiways": [
+                {
+                    "Identifier": "J",
+                    "Description": "Main parallel taxiway"
+                }
+            ],
+            "FBOs": [
+                {
+                    "Name": "Signature AUS",
+                    "Location": "East Side",
+                    "AccessVia": ["Taxiway J"]
+                },
+                {
+                    "Name": "Atlantic Aviation",
+                    "Location": "West Side",
+                    "AccessVia": ["Taxiway J"]
+                }
+            ],
+            "CommonRoutes": [
+                {
+                    "From": "Signature",
+                    "To": "Runway 17L",
+                    "Instructions": "Taxi via J to Runway 17L",
+                    "Hotspots": ["Terminal crossing"]
+                }
+            ]
+        },
+        {
+            "ICAO": "KHOU",
+            "IATA": "HOU",
+            "Name": "William P. Hobby Airport",
+            "ShortName": "Houston Hobby",
+            "Elevation": 46,
+            "IsControlled": true,
+            "Ground_Frequencies": {
+                "Ground": "121.7",
+                "Tower": "118.7",
+                "Clearance": "118.925"
+            },
+            "Runways": [
+                {
+                    "Identifier": "13R/31L",
+                    "Length": 7602,
+                    "Width": 150,
+                    "Surface": "Concrete"
+                },
+                {
+                    "Identifier": "13L/31R",
+                    "Length": 6000,
+                    "Width": 150,
+                    "Surface": "Concrete"
+                }
+            ],
+            "Taxiways": [
+                {
+                    "Identifier": "A",
+                    "Description": "Main parallel taxiway"
+                }
+            ],
+            "FBOs": [
+                {
+                    "Name": "Wilson Air Center",
+                    "Location": "South Ramp",
+                    "AccessVia": ["Taxiway A"]
+                },
+                {
+                    "Name": "Million Air",
+                    "Location": "North Ramp",
+                    "AccessVia": ["Taxiway A"]
+                }
+            ],
+            "CommonRoutes": [
+                {
+                    "From": "Wilson Air",
+                    "To": "Runway 13R",
+                    "Instructions": "Taxi via A to Runway 13R",
+                    "Hotspots": ["Runway 13L intersection"]
+                }
+            ]
+        },
+        {
+            "ICAO": "KLUD",
+            "IATA": "LUD",
+            "Name": "Decatur Municipal Airport",
+            "ShortName": "Decatur",
+            "Elevation": 640,
+            "IsControlled": false,
+            "Ground_Frequencies": {
+                "Ground": "122.8",
+                "Tower": "122.8",
+                "Clearance": "122.8"
+            },
+            "Runways": [
+                {
+                    "Identifier": "07/25",
+                    "Length": 3500,
+                    "Width": 75,
+                    "Surface": "Asphalt"
+                }
+            ],
+            "Taxiways": [
+                {
+                    "Identifier": "A",
+                    "Description": "Main taxiway parallel to runway"
+                }
+            ],
+            "FBOs": [
+                {
+                    "Name": "Ludington Airport FBO",
+                    "Location": "Main Ramp",
+                    "AccessVia": ["A"]
+                }
+            ],
+            "CommonRoutes": [
+                {
+                    "From": "Main Ramp",
+                    "To": "Runway 07",
+                    "Instructions": "Taxi via Alpha to Runway 07",
+                    "Hotspots": []
+                }
+            ]
+        }
+    ]
+} 

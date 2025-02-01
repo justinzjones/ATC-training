@@ -1,0 +1,185 @@
+{
+    "App Content": [
+        {
+            "Type": "AppIntro",
+            "Title": "ATC Training",
+            "Description/Objective": "Welcome to ATC Training. Through a series of interaactive exercises you'll learn how to communicate with Air Traffic Control effectively.",
+            "Order": 1
+        },
+        {
+            "Type": "App",
+            "Title": "ATC Training",
+            "Description/Objective": "Master aviation radio communications with interactive exercises",
+            "Order": 1
+        },
+        {
+            "Type": "Section",
+            "Title": "VFR Training",
+            "Description/Objective": "VFR communications training for student and seasoned pilots.",
+            "Order": 1
+        },
+        {
+            "Type": "Section",
+            "Title": "IFR Training",
+            "Description/Objective": "IFR communications training for student and seasoned pilots.",
+            "Order": 2
+        }
+    ],
+    "Subsections": [
+        {
+            "Section": "Introduction",
+            "Subsection": null,
+            "Description/Objective": "Visual Flight Rules communications training for student and seasoned pilots."
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Taxi Out",
+            "Description/Objective": "Learn proper communication for ground operations before takeoff"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Takeoff",
+            "Description/Objective": "Master departure communications"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Flight Plan",
+            "Description/Objective": "Activate flight plans"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Flight Following",
+            "Description/Objective": "Phraseology for contacting ATC and requesting flight following"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Airspace Entry",
+            "Description/Objective": "Requesting permission to enter different airspace classes"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Approach",
+            "Description/Objective": "Arrival and approach communications"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Taxi In",
+            "Description/Objective": "Ground operations after landing"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Request Clearance",
+            "Description/Objective": "Requesting and receiving a clearance from Clearance Delivery"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Takeoff",
+            "Description/Objective": "IFR takeoff clearances and departure frequency changes"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Departure",
+            "Description/Objective": "Departure procedure communications and initial climb instructions"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Enroute (request)",
+            "Description/Objective": "Requesting altitude changes, deviations, and route modifications"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Enroute (receive)",
+            "Description/Objective": "Handling ATC instructions, clearances, and frequency changes"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Approach (request)",
+            "Description/Objective": "Requesting approach type and arrival procedures"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Approach (receive)",
+            "Description/Objective": "Receiving and acknowledging approach clearances and instructions"
+        },
+        {
+            "Section": "IFR",
+            "Subsection": "Landing",
+            "Description/Objective": "Landing clearances and runway exit instructions"
+        }
+    ],
+    "Lessons": [
+        {
+            "Section": "VFR",
+            "Subsection": "Taxi Out",
+            "Lesson#": 1,
+            "Title": "Self announce Taxi",
+            "Objective": "Practice announcing taxi intentions to the runway in use at a non-towered airport.",
+            "Communication Type": "Broadcast Only",
+            "Controlled": "No"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Taxi Out",
+            "Lesson#": 2,
+            "Title": "Basic Taxi Request",
+            "Objective": "Practice receiving and accurately reading back basic taxi routing instructions to navigate from a parking location to the active runway.",
+            "Communication Type": "Request-Response",
+            "Controlled": "Yes"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Taxi Out",
+            "Lesson#": 3,
+            "Title": "Complex Taxi Request",
+            "Objective": "Practice taxi-out requests and clearances, including hold-short instructions and runway crossing authorizations.",
+            "Communication Type": "Request-Response",
+            "Controlled": "Yes"
+        }
+    ],
+    "Communications": [
+        {
+            "Lesson ID": "VFR-TaxiOut-1",
+            "Step#": 1,
+            "Type": "Request",
+            "Situation Text": "You are at {{airport_name}} parked at {{airport location}}. ",
+            "Pilot request": "{{airport_name}} \"traffic\", {{call_sign}}, {{airport_location}}, \"taxi to\" {{runway number}}, {{airport_name}}",
+            "ATC Response": null,
+            "Pilot readback": null
+        },
+        {
+            "Lesson ID": "VFR-TaxiOut-2",
+            "Step#": 1,
+            "Type": "Request",
+            "Situation Text": "You are at {{airport_name}}, parked at {{airport location}}. ",
+            "Pilot request": "{{airport_name}} Ground, {{call_sign}}, {{airport_location}}, Request taxi with {{atis_information}}",
+            "ATC Response": "{{call_sign}}, {{airport_name}} Ground, Runway {{runway_number}}, taxi via {{taxi_way}}",
+            "Pilot readback": "{{call_sign}}, Runway {{runway_number}}, taxi via {{taxi_way}}"
+        }
+    ],
+    "Special Instructions": [
+        {
+            "Lesson ID": "VFR-TaxiOut-1",
+            "Element": "[{CALLSIGN}]",
+            "Special Handling": "Pronounce using phonetic alphabet (e.g., 'November five four two kilo x-ray')"
+        },
+        {
+            "Lesson ID": "VFR-TaxiOut-2",
+            "Element": "[{FREQ_TWR}]",
+            "Special Handling": "Pronounce each digit (e.g., 'one one eight point seven')"
+        }
+    ],
+    "Variables": [
+        {
+            "Variable Name": "CALLSIGN",
+            "Type": "Generated",
+            "Values/Rules": "Format: N###XX or user_callsign if provided",
+            "Dependencies": "None"
+        },
+        {
+            "Variable Name": "AIRPORT",
+            "Type": "List",
+            "Values/Rules": "KPAO, KSQL, KHWD, KLVK",
+            "Dependencies": "Determines RWY, FREQ_TWR, FREQ_GND"
+        }
+    ]
+} 
