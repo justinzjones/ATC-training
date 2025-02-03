@@ -10,6 +10,18 @@ struct Lesson: Identifiable, Codable {
     let communicationType: String
     let isControlled: Bool
     
+    // Add memberwise initializer for previews
+    init(id: String, section: String, subsection: String, lessonNumber: Int, title: String, objective: String, communicationType: String, isControlled: Bool) {
+        self.id = id
+        self.section = section
+        self.subsection = subsection
+        self.lessonNumber = lessonNumber
+        self.title = title
+        self.objective = objective
+        self.communicationType = communicationType
+        self.isControlled = isControlled
+    }
+    
     enum CodingKeys: String, CodingKey {
         case section = "Section"
         case subsection = "Subsection"

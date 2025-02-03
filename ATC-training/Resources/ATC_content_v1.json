@@ -142,7 +142,7 @@
             "Step#": 1,
             "Type": "Request",
             "Situation Text": "You are at {{airport_name}} parked at {{airport location}}. ",
-            "Pilot request": "{{airport_name}} \"traffic\", {{call_sign}}, {{airport_location}}, \"taxi to\" {{runway number}}, {{airport_name}}",
+            "Pilot request": "{{airport_name}} traffic, {{call_sign}}, {{airport_location}}, taxi to {{runway number}}, {{airport_name}}",
             "ATC Response": null,
             "Pilot readback": null
         },
@@ -150,10 +150,28 @@
             "Lesson ID": "VFR-TaxiOut-2",
             "Step#": 1,
             "Type": "Request",
-            "Situation Text": "You are at {{airport_name}}, parked at {{airport location}}. ",
+            "Situation Text": "You are at {{airport_name}}, parked at {{airport location}}.",
             "Pilot request": "{{airport_name}} Ground, {{call_sign}}, {{airport_location}}, Request taxi with {{atis_information}}",
             "ATC Response": "{{call_sign}}, {{airport_name}} Ground, Runway {{runway_number}}, taxi via {{taxi_way}}",
             "Pilot readback": "{{call_sign}}, Runway {{runway_number}}, taxi via {{taxi_way}}"
+        },
+        {
+            "Lesson ID": "VFR-TaxiOut-3",
+            "Step#": 1,
+            "Type": "Request",
+            "Situation Text": "You are at {{airport_name}}, parked at {{airport location}}.",
+            "Pilot request": "{{airport_name}} Ground, {{call_sign}}, {{airport_location}}, request taxi with {{atis_information}}",
+            "ATC Response": "{{call_sign}}, {{airport_name}} Ground, Runway {{runway_number}}, taxi via {{taxi_way}}, hold short of Runway {{runway_number}} at {{taxi_way}}",
+            "Pilot readback": null
+        },
+        {
+            "Lesson ID": "VFR-TaxiOut-3",
+            "Step#": 2,
+            "Type": "Request",
+            "Situation Text": "You are holding short of Runway {{runway_number}}",
+            "Pilot request": null,
+            "ATC Response": "{{call_sign}}, cross Runway {{runway_number}} at {{taxi_way}}, and taxi to {{runway_number}}, via {{taxi_way}}",
+            "Pilot readback": "cross Runway {{runway_number}} at {{taxi_way}}, and taxi to {{runway_number}}, via {{taxi_way}}, {{call_sign}}"
         }
     ],
     "Special Instructions": [
@@ -181,5 +199,35 @@
             "Values/Rules": "KPAO, KSQL, KHWD, KLVK",
             "Dependencies": "Determines RWY, FREQ_TWR, FREQ_GND"
         }
-    ]
+    ],
+    "Phraseology": {
+        "PhoneticAlphabet": [
+            "Alpha",
+            "Bravo",
+            "Charlie",
+            "Delta",
+            "Echo",
+            "Foxtrot",
+            "Golf",
+            "Hotel",
+            "India",
+            "Juliet",
+            "Kilo",
+            "Lima",
+            "Mike",
+            "November",
+            "Oscar",
+            "Papa",
+            "Quebec",
+            "Romeo",
+            "Sierra",
+            "Tango",
+            "Uniform",
+            "Victor",
+            "Whiskey",
+            "X-Ray",
+            "Yankee",
+            "Zulu"
+        ]
+    }
 } 
