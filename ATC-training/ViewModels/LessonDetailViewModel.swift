@@ -27,6 +27,10 @@ final class LessonDetailViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var error: Error?
     
+    @Published private(set) var currentStep: Int = 1
+    @Published private(set) var totalSteps: Int = 1
+    private var communications: [Communication] = []
+    
     private let lesson: Lesson
     private var selectedAirport: Airport?
     private var currentCommunication: Communication?
@@ -172,30 +176,25 @@ final class LessonDetailViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            // Load communications and airports
-            async let communications = ContentLoader.shared.loadCommunications()
-            async let airports = ContentLoader.shared.loadAirports()
+            let comms = try await ContentLoader.shared.loadCommunications()
             
-            let (comms, airportList) = try await (communications, airports)
+            // Filter communications for this lesson
+            communications = comms.filter {
+                $0.lessonID == "VFR-\(lesson.subsection.replacingOccurrences(of: " ", with: ""))-\(lesson.lessonNumber)"
+            }.sorted { $0.stepNumber < $1.stepNumber }
             
-            print("📖 Looking for communication with lessonID: VFR-\(lesson.subsection)-\(lesson.lessonNumber)")
-            print("📖 Available communications: \(comms.map { $0.lessonID })")
+            totalSteps = communications.count
             
-            // Find the communication for this lesson
-            guard let communication = comms.first(where: { 
-                let expectedId = "VFR-\(lesson.subsection.replacingOccurrences(of: " ", with: ""))-\(lesson.lessonNumber)"
-                let matches = $0.lessonID == expectedId && $0.stepNumber == 1
-                print("📖 Checking \($0.lessonID) against \(expectedId): \(matches)")
-                return matches
-            }) else {
+            // Load first step
+            guard let firstComm = communications.first else {
                 throw ContentError.lessonNotFound
             }
             
-            // Store the communication for state management
-            currentCommunication = communication
+            currentCommunication = firstComm
             
             // Select appropriate airport
-            let availableAirports = airportList.filter { $0.isControlled == lesson.isControlled }
+            let airports = try await ContentLoader.shared.loadAirports()
+            let availableAirports = airports.filter { $0.isControlled == lesson.isControlled }
             print("📖 Found \(availableAirports.count) matching airports")
             
             guard let airport = availableAirports.randomElement() else {
@@ -215,13 +214,13 @@ final class LessonDetailViewModel: ObservableObject {
             let atisInfo = try await getRandomAtisLetter()
             
             // Replace placeholders in situation text
-            situationText = communication.situationText
+            situationText = firstComm.situationText
                 .replacingOccurrences(of: "{{airport_name}}", with: airport.name)
                 .replacingOccurrences(of: "{{airport location}}", with: randomFBO.location)
                 .replacingOccurrences(of: "{{atis_information}}", with: atisInfo)
             
             // Replace placeholders in pilot request
-            pilotRequest = communication.pilotRequest?
+            pilotRequest = firstComm.pilotRequest?
                 .replacingOccurrences(of: "{{airport_name}}", with: airport.shortName)
                 .replacingOccurrences(of: "{{call_sign}}", with: lessonCallSign!)  // Use stored callsign
                 .replacingOccurrences(of: "{{airport_location}}", with: randomFBO.location)
@@ -251,6 +250,80 @@ final class LessonDetailViewModel: ObservableObject {
             print("❌ LessonDetailView: Error loading content - \(error.localizedDescription)")
             self.error = error
         }
+    }
+    
+    private func advanceToNextStep() {
+        print("📖 Advancing to step \(currentStep + 1) of \(totalSteps)")
+        
+        // Clear all state before advancing
+        withAnimation(.easeInOut) {
+            pilotRequest = nil
+            atcResponse = nil
+            pilotReadback = nil
+            currentState = .initial
+        }
+        
+        // Advance step counter
+        currentStep += 1
+        currentCommunication = communications[currentStep - 1]
+        
+        // Load new step content with existing airport and callsign
+        guard let airport = selectedAirport,
+              let randomFBO = airport.fbos.randomElement() else {
+            return
+        }
+        
+        // Generate runway number once for consistency
+        let runwayNumber = getRandomRunwayNumber(from: airport)
+        
+        // Process situation text
+        situationText = (currentCommunication?.situationText ?? "")
+            .replacingOccurrences(of: "{{airport_name}}", with: airport.name)
+            .replacingOccurrences(of: "{{airport location}}", with: randomFBO.location)
+            .replacingOccurrences(of: "{{runway_number}}", with: runwayNumber)
+            .replacingOccurrences(of: "{{runway number}}", with: runwayNumber)
+        
+        // Process pilot request if exists
+        pilotRequest = currentCommunication?.pilotRequest.map { text in
+            text.replacingOccurrences(of: "{{airport_name}}", with: airport.shortName)
+                .replacingOccurrences(of: "{{call_sign}}", with: lessonCallSign ?? "")
+                .replacingOccurrences(of: "{{airport_location}}", with: randomFBO.location)
+                .replacingOccurrences(of: "{{runway_number}}", with: runwayNumber)
+                .replacingOccurrences(of: "{{runway number}}", with: runwayNumber)
+        }
+        
+        // Process ATC response if exists
+        atcResponse = currentCommunication?.atcResponse.map { text in
+            text.replacingOccurrences(of: "{{airport_name}}", with: airport.shortName)
+                .replacingOccurrences(of: "{{call_sign}}", with: lessonCallSign ?? "")
+                .replacingOccurrences(of: "{{runway_number}}", with: runwayNumber)
+                .replacingOccurrences(of: "{{runway number}}", with: runwayNumber)
+        }
+        
+        // Process pilot readback if exists
+        pilotReadback = currentCommunication?.pilotReadback.map { text in
+            text.replacingOccurrences(of: "{{airport_name}}", with: airport.shortName)
+                .replacingOccurrences(of: "{{call_sign}}", with: lessonCallSign ?? "")
+                .replacingOccurrences(of: "{{runway_number}}", with: runwayNumber)
+                .replacingOccurrences(of: "{{runway number}}", with: runwayNumber)
+        }
+        
+        // Process taxiway placeholders
+        let taxiway = getRandomTaxiway(from: airport) ?? "Juliet" // Fallback to a default taxiway
+        let phoneticTaxiway = formatTaxiway(taxiway)
+        
+        // Update all text elements with the taxiway
+        situationText = situationText.replacingOccurrences(of: "{{taxi_way}}", with: phoneticTaxiway)
+        pilotRequest = pilotRequest?.replacingOccurrences(of: "{{taxi_way}}", with: phoneticTaxiway)
+        atcResponse = atcResponse?.replacingOccurrences(of: "{{taxi_way}}", with: phoneticTaxiway)
+        pilotReadback = pilotReadback?.replacingOccurrences(of: "{{taxi_way}}", with: phoneticTaxiway)
+        
+        // Start the next step in the appropriate state
+        withAnimation(.easeInOut) {
+            currentState = currentCommunication?.pilotRequest != nil ? .pilotRequest : .atcResponse
+        }
+        
+        print("📖 New step state initialized - State: \(currentState)")
     }
     
     func advanceToNextState() {
@@ -313,11 +386,16 @@ final class LessonDetailViewModel: ObservableObject {
             }
             
         case .pilotReadback:
-            print("📖 Readback complete - completing lesson")
-            withAnimation(.easeInOut) {
-                print("📖 Transitioning from readback to complete state")
-                currentState = .complete
-                print("📖 New state after transition: \(currentState)")
+            print("📖 Readback complete")
+            // Check if there are more steps before completing
+            if currentStep < totalSteps {
+                print("📖 Moving to next step")
+                advanceToNextStep()
+            } else {
+                print("📖 All steps complete - showing summary")
+                withAnimation(.easeInOut) {
+                    currentState = .complete
+                }
             }
             
         case .complete:
@@ -418,9 +496,15 @@ final class LessonDetailViewModel: ObservableObject {
     }
     
     func completeReadback() {
-        print("🎯 Pilot readback successful - completing lesson")
-        withAnimation(.easeInOut) {
-            currentState = .complete
+        print("🎯 Pilot readback successful")
+        if currentStep < totalSteps {
+            print("🎯 Moving to next step (\(currentStep + 1) of \(totalSteps))")
+            advanceToNextStep()
+        } else {
+            print("🎯 All steps complete - showing summary")
+            withAnimation(.easeInOut) {
+                currentState = .complete
+            }
         }
     }
 } 

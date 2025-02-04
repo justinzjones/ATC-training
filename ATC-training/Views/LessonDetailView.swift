@@ -5,6 +5,7 @@ struct LessonDetailView: View {
     @StateObject private var viewModel: LessonDetailViewModel
     @State private var showingSuccess = false
     @Environment(\.dismiss) private var dismiss
+    @State private var scrollProxy: ScrollViewProxy?
     
     init(lesson: Lesson) {
         self.lesson = lesson
@@ -13,69 +14,99 @@ struct LessonDetailView: View {
     
     var body: some View {
         ScrollView {
-            if viewModel.currentState == .complete {
-                LessonSuccessView(
-                    lesson: lesson,
-                    completedSteps: completedSteps,
-                    onContinue: { dismiss() }
-                )
-                .transition(.opacity)
-            } else {
+            ScrollViewReader { proxy in
                 VStack(spacing: 24) {
+                    // Title and step indicator row
+                    HStack {
+                        Text("Lesson \(lesson.lessonNumber)")
+                            .font(.title)  // Changed from .title2
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        StepIndicator(
+                            totalSteps: viewModel.totalSteps,
+                            currentStep: viewModel.currentStep
+                        )
+                    }
+                    .padding(.horizontal)
+                    
                     // Lesson objective
                     Text(lesson.objective)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.horizontal)
-                        .padding(.top)
                     
-                    // Situation Card
-                    SituationCard(situationText: viewModel.situationText)
-                        .padding(.horizontal)
-                    
-                    // Pilot Request
-                    if viewModel.currentState >= .pilotRequest,
-                       let pilotRequest = viewModel.pilotRequest {
-                        RequestCard(
-                            title: "Your Request",
-                            isCompleted: viewModel.currentState > .pilotRequest,
-                            pilotRequest: pilotRequest,
-                            onSuccess: {
-                                withAnimation {
-                                    viewModel.advanceToNextState()
+                    if viewModel.currentState == .complete {
+                        LessonSuccessView(
+                            lesson: lesson,
+                            completedSteps: completedSteps,
+                            onContinue: { dismiss() }
+                        )
+                        .transition(.opacity)
+                    } else {
+                        // Current step content
+                        VStack(spacing: 24) {
+                            // Situation Card
+                            SituationCard(situationText: viewModel.situationText)
+                                .padding(.horizontal)
+                                .transition(.opacity)
+                            
+                            // Pilot Request
+                            if viewModel.currentState >= .pilotRequest,
+                               let pilotRequest = viewModel.pilotRequest {
+                                RequestCard(
+                                    title: "Your Request",
+                                    isCompleted: viewModel.currentState > .pilotRequest,
+                                    pilotRequest: pilotRequest,
+                                    onSuccess: {
+                                        withAnimation {
+                                            viewModel.advanceToNextState()
+                                        }
+                                    },
+                                    currentStep: viewModel.currentStep
+                                )
+                                .padding(.horizontal)
+                            }
+                            
+                            // ATC Response and Readback section
+                            if viewModel.currentState >= .atcResponse {
+                                VStack(spacing: 16) {
+                                    ATCResponseCard(responseText: viewModel.atcResponse ?? "")
+                                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                                    
+                                    if let readback = viewModel.pilotReadback {
+                                        RequestCard(
+                                            title: "Pilot Readback",
+                                            isCompleted: viewModel.currentState > .pilotReadback,
+                                            pilotRequest: readback,
+                                            onSuccess: {
+                                                withAnimation(.easeInOut) {
+                                                    viewModel.completeReadback()
+                                                }
+                                            },
+                                            currentStep: viewModel.currentStep
+                                        )
+                                        .id("readback-step-\(viewModel.currentStep)")
+                                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .onChange(of: viewModel.currentStep) { _ in
+                                    withAnimation {
+                                        proxy.scrollTo("readback-step-\(viewModel.currentStep)", anchor: .bottom)
+                                    }
                                 }
                             }
-                        )
-                        .padding(.horizontal)
-                    }
-                    
-                    // ATC Response
-                    if viewModel.currentState >= .atcResponse {
-                        VStack(spacing: 16) {
-                            ATCResponseCard(responseText: viewModel.atcResponse ?? "")
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                            
-                            if let readback = viewModel.pilotReadback {
-                                RequestCard(
-                                    title: "Pilot Readback",
-                                    isCompleted: viewModel.currentState > .pilotReadback,
-                                    pilotRequest: readback,
-                                    onSuccess: {
-                                        withAnimation(.easeInOut) {
-                                            viewModel.completeReadback()
-                                        }
-                                    }
-                                )
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                                .animation(.easeOut.delay(0.3), value: viewModel.currentState)
-                            }
                         }
-                        .padding(.horizontal)
                     }
+                }
+                .onAppear {
+                    scrollProxy = proxy
                 }
             }
         }
-        .navigationTitle("Lesson \(lesson.lessonNumber)")
+        .navigationBarTitleDisplayMode(.inline)  // Remove large navigation title
         .overlay {
             if viewModel.isLoading {
                 LoadingView()
@@ -89,6 +120,7 @@ struct LessonDetailView: View {
         .task {
             await viewModel.loadContent()
         }
+        .animation(.easeInOut, value: viewModel.currentStep)
         .animation(.easeInOut, value: viewModel.currentState)
     }
     

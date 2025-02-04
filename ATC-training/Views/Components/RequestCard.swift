@@ -11,26 +11,31 @@ struct RequestCard: View {
     @State private var showError: Bool = false
     @State private var selectedAirport: Airport?
     let onSuccess: () -> Void
+    let currentStep: Int
     
-    init(title: String, isCompleted: Bool, pilotRequest: String, onSuccess: @escaping () -> Void) {
+    init(title: String, isCompleted: Bool, pilotRequest: String, onSuccess: @escaping () -> Void, currentStep: Int) {
         self.title = title
         self.isCompleted = isCompleted
-        
-        // Split and trim the elements
         self.correctSequence = pilotRequest.components(separatedBy: ", ")
             .map { $0.trimmingCharacters(in: .whitespaces) }
         self.elements = self.correctSequence
         
         // Create a new array and shuffle it thoroughly
         var shuffled = self.correctSequence
-        for _ in 0...3 { // Multiple shuffles for better randomization
+        for _ in 0...3 {
             shuffled.shuffle()
         }
         self.availableElements = shuffled
-        
         self.onSuccess = onSuccess
         
-        print("🎲 Initial pill order: \(shuffled)")  // Log the initial order
+        // Always start expanded and reset selected elements
+        _isExpanded = State(initialValue: true)
+        _selectedElements = State(initialValue: [])
+        
+        self.currentStep = currentStep
+        
+        print("🎲 New RequestCard initialized - Title: \(title)")
+        print("🎲 Initial pill order: \(shuffled)")
     }
     
     var body: some View {
@@ -51,6 +56,7 @@ struct RequestCard: View {
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
+                            .transition(.scale.combined(with: .opacity))
                     }
                     
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
@@ -119,11 +125,12 @@ struct RequestCard: View {
         .transition(.move(edge: .bottom).combined(with: .opacity))
         .onChange(of: isCompleted) { completed in
             if completed {
-                withAnimation(.easeInOut(duration: 0.3)) {
+                withAnimation(.spring()) {
                     isExpanded = false
                 }
             }
         }
+        .id("\(title)-\(correctSequence.joined(separator: ","))-\(currentStep)")  // Include step number in ID
     }
     
     private func selectElement(_ element: String) {
