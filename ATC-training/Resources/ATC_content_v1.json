@@ -239,11 +239,7 @@
             "6": "six",
             "7": "seven",
             "8": "eight",
-            "9": "niner",
-            "decimal": "decimal",
-            "point": "point",
-            "hundred": "hundred",
-            "thousand": "thousand"
+            "9": "niner"
         },
         "Altitude": {
             "format": "Each digit pronounced individually except for hundreds and thousands",

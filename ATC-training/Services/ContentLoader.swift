@@ -112,9 +112,23 @@ struct PhraseologyWrapper: Codable {
 
 struct Phraseology: Codable {
     let phoneticAlphabet: [String]
+    let numbers: [String: String]
+    let runway: RunwayPhraseology
     
     enum CodingKeys: String, CodingKey {
         case phoneticAlphabet = "PhoneticAlphabet"
+        case numbers = "Numbers"
+        case runway = "Runway"
+    }
+}
+
+struct RunwayPhraseology: Codable {
+    let format: String
+    let designators: [String: String]
+    
+    enum CodingKeys: String, CodingKey {
+        case format = "format"
+        case designators = "designators"
     }
 }
 
