@@ -228,6 +228,86 @@
             "X-Ray",
             "Yankee",
             "Zulu"
-        ]
+        ],
+        "Numbers": {
+            "0": "zero",
+            "1": "one",
+            "2": "two",
+            "3": "three",
+            "4": "four",
+            "5": "five",
+            "6": "six",
+            "7": "seven",
+            "8": "eight",
+            "9": "niner",
+            "decimal": "decimal",
+            "point": "point",
+            "hundred": "hundred",
+            "thousand": "thousand"
+        },
+        "Altitude": {
+            "format": "Each digit pronounced individually except for hundreds and thousands",
+            "examples": [
+                {
+                    "written": "3000",
+                    "spoken": "three thousand"
+                },
+                {
+                    "written": "12000",
+                    "spoken": "one two thousand"
+                },
+                {
+                    "written": "2500",
+                    "spoken": "two thousand five hundred"
+                },
+                {
+                    "written": "FL180",
+                    "spoken": "flight level one eight zero"
+                },
+                {
+                    "written": "10500",
+                    "spoken": "one zero thousand five hundred"
+                }
+            ],
+            "special": {
+                "FL": "flight level",
+                "MSL": "MSL",
+                "AGL": "AGL"
+            }
+        },
+        "Runway": {
+            "format": "Numbers spoken individually followed by Left/Right/Center",
+            "designators": {
+                "L": "left",
+                "R": "right",
+                "C": "center"
+            },
+            "examples": [
+                {
+                    "written": "27L",
+                    "spoken": "two seven left"
+                },
+                {
+                    "written": "18C",
+                    "spoken": "one eight center"
+                },
+                {
+                    "written": "36R",
+                    "spoken": "three six right"
+                },
+                {
+                    "written": "9",
+                    "spoken": "niner"
+                },
+                {
+                    "written": "04L",
+                    "spoken": "zero four left"
+                }
+            ],
+            "special": {
+                "prefix": "Runway",
+                "intersection": "intersection"
+            }
+        }
     }
 } 

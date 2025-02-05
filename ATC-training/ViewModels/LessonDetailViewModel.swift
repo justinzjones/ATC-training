@@ -422,12 +422,9 @@ final class LessonDetailViewModel: ObservableObject {
     }
     
     private func formatSpeechText(_ text: String) -> String {
-        // Convert N1867KX to "November one eight six seven kilo x-ray"
-        // Convert Runway 27L to "Runway two seven left"
-        // Keep taxiway phonetic (already converted in display text)
         var speechText = text
         
-        // Format callsigns for speech
+        // Format callsigns (N1234AB -> "November one two three four alpha bravo")
         if let callSignPattern = try? NSRegularExpression(pattern: "N\\d{2,4}[A-Z]{1,2}") {
             let range = NSRange(text.startIndex..<text.endIndex, in: text)
             let matches = callSignPattern.matches(in: text, range: range)
@@ -436,19 +433,82 @@ final class LessonDetailViewModel: ObservableObject {
                 if let range = Range(match.range, in: text) {
                     let callSign = String(text[range])
                     var formatted = ""
+                    
+                    // Process each character according to standardized pronunciations
                     for char in callSign {
                         if char.isNumber {
-                            formatted += " \(char)"  // Speak each number individually
+                            // Use standardized number pronunciation
+                            let number = String(char)
+                            switch number {
+                            case "0": formatted += "zero "
+                            case "1": formatted += "one "
+                            case "2": formatted += "two "
+                            case "3": formatted += "three "
+                            case "4": formatted += "four "
+                            case "5": formatted += "five "
+                            case "6": formatted += "six "
+                            case "7": formatted += "seven "
+                            case "8": formatted += "eight "
+                            case "9": formatted += "niner "
+                            default: formatted += "\(char) "
+                            }
                         } else {
+                            // Use phonetic alphabet for letters
                             switch char.uppercased() {
-                            case "N": formatted += "November"
-                            case "A": formatted += "Alpha"
-                            // ... rest of phonetic alphabet ...
+                            case "N": formatted += "November "
+                            case "A": formatted += "Alpha "
+                            // ... rest of phonetic alphabet
                             default: formatted += String(char)
                             }
                         }
-                        formatted += " "
                     }
+                    speechText = speechText.replacingCharacters(in: range, with: formatted.trimmingCharacters(in: .whitespaces))
+                }
+            }
+        }
+        
+        // Format runway numbers (27L -> "two seven left", 9 -> "niner")
+        if let runwayPattern = try? NSRegularExpression(pattern: "Runway \\d{1,2}[LRC]?") {
+            let range = NSRange(text.startIndex..<text.endIndex, in: text)
+            let matches = runwayPattern.matches(in: text, range: range)
+            
+            for match in matches.reversed() {
+                if let range = Range(match.range, in: text) {
+                    let runway = String(text[range])
+                    var formatted = "Runway "
+                    
+                    // Extract numbers and designator
+                    let components = runway.components(separatedBy: .whitespaces)[1]
+                    let numbers = components.filter { $0.isNumber }
+                    let designator = components.filter { !$0.isNumber }
+                    
+                    // Format numbers according to standard
+                    for char in numbers {
+                        switch char {
+                        case "0": formatted += "zero "
+                        case "1": formatted += "one "
+                        case "2": formatted += "two "
+                        case "3": formatted += "three "
+                        case "4": formatted += "four "
+                        case "5": formatted += "five "
+                        case "6": formatted += "six "
+                        case "7": formatted += "seven "
+                        case "8": formatted += "eight "
+                        case "9": formatted += "niner "
+                        default: formatted += "\(char) "
+                        }
+                    }
+                    
+                    // Add designator if present
+                    if !designator.isEmpty {
+                        switch designator {
+                        case "L": formatted += "left"
+                        case "R": formatted += "right"
+                        case "C": formatted += "center"
+                        default: break
+                        }
+                    }
+                    
                     speechText = speechText.replacingCharacters(in: range, with: formatted.trimmingCharacters(in: .whitespaces))
                 }
             }
