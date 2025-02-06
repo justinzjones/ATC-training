@@ -134,6 +134,15 @@
             "Objective": "Practice taxi-out requests and clearances, including hold-short instructions and runway crossing authorizations.",
             "Communication Type": "Request-Response",
             "Controlled": "Yes"
+        },
+        {
+            "Section": "VFR",
+            "Subsection": "Takeoff",
+            "Lesson#": 1,
+            "Title": "Announce Takeoff (non-towered)",
+            "Objective": "Announce your takeoff from a runway and inform any traffic in the area of the direction in which you will depart the area.",
+            "Communication Type": "Broadcast Only",
+            "Controlled": "No"
         }
     ],
     "Communications": [
@@ -172,6 +181,15 @@
             "Pilot request": null,
             "ATC Response": " {{call_sign}}, cross Runway {{runway_number}} at {{taxi_way}}, and taxi to {{runway_number}}, via {{taxi_way}}",
             "Pilot readback": "cross Runway {{runway_number}} at {{taxi_way}}, and taxi to {{runway_number}}, via {{taxi_way}}, {{call_sign}}"
+        },
+        {
+            "Lesson ID": "VFR-Takeoff-1",
+            "Step#": 1,
+            "Type": "Broadcast",
+            "Situation Text": "You are at {{airport_name}} and intend to takeoff from {{runway_number}} and make a {{departure}} turnout for {{direction}} departure.",
+            "Pilot request":  "{{airport_name}} traffic, {{call_sign}}, Taking off from {{runway_number}}, {{departure}} turnout, {{direction}} departure, {{airport_name}}",
+            "ATC Response": null,
+            "Pilot readback": null
         }
     ],
     "Special Instructions": [
@@ -305,5 +323,9 @@
                 "intersection": "intersection"
             }
         }
+    },
+    "Directions": {
+        "Compass": ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"],
+        "Departure": ["Left", "Right", "Straight out"]
     }
 } 
