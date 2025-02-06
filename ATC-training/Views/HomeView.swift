@@ -1,7 +1,22 @@
 import SwiftUI
 
+extension View {
+    func atcNavigationTitle(_ title: String) -> some View {
+        self
+            .navigationTitle(title)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(title)
+                        .font(.headline)
+                        .padding(.top, 4)
+                }
+            }
+    }
+}
+
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @State private var showingSettings = false
     
     var body: some View {
         NavigationView {
@@ -25,7 +40,27 @@ struct HomeView: View {
                     .padding(.horizontal)
                 }
             }
-            .navigationTitle("ATC Training")
+            .atcNavigationTitle("ATC Training")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingSettings.toggle()
+                    }) {
+                        VStack(alignment: .trailing) {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                            Spacer()
+                        }
+                        .frame(height: 44)
+                    }
+                }
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
+                    .presentationDetents([.medium, .large])
+            }
             .overlay {
                 if viewModel.isLoading {
                     LoadingView()
@@ -37,6 +72,7 @@ struct HomeView: View {
                 Text(viewModel.error?.localizedDescription ?? "")
             }
         }
+        .navigationViewStyle(.stack)
         .task {
             await viewModel.loadContent()
         }

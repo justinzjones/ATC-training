@@ -30,6 +30,19 @@ struct ATCResponseCard: View {
     
     private func formatSpeechText(_ text: String) -> String {
         var speechText = text
+        
+        // Load user preferences
+        let isCallsignActive = UserDefaults.standard.bool(forKey: "isCallsignActive")
+        let customCallsign = UserDefaults.standard.string(forKey: "callsign") ?? ""
+        
+        // Replace default callsign with custom if active
+        if isCallsignActive && !customCallsign.isEmpty {
+            let defaultCallsignPattern = "N\\d{2,4}[A-Z]{1,2}"
+            if let range = speechText.range(of: defaultCallsignPattern, options: .regularExpression) {
+                speechText.replaceSubrange(range, with: customCallsign)
+            }
+        }
+        
         let phraseology = loadPhraseology()
         let numbersDict = phraseology?.numbers ?? [:]
         let designators = phraseology?.runway.designators ?? [:]
@@ -48,7 +61,8 @@ struct ATCResponseCard: View {
     }
 
     private func processCallsigns(_ text: inout String, numbersDict: [String: String], phoneticAlphabet: [String]) {
-        let pattern = "N\\d{2,4}[A-Z]{1,2}"
+        // Updated pattern to match various callsign formats
+        let pattern = "\\b[A-Z]{1,3}\\d{1,4}[A-Z]{0,2}\\b"
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
         
         let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
@@ -119,20 +133,22 @@ struct ATCResponseCard: View {
     private func speakResponse() {
         speechDelegate = SpeechDelegate(isPlaying: $isPlaying)
         synthesizer.delegate = speechDelegate
-        
         let speechText = formatSpeechText(responseText)
         let components = speechText.components(separatedBy: ",")
         
-        synthesizer.stopSpeaking(at: .immediate)
+        // Get current settings
+        let speechRate = SpeechRate(rawValue: UserDefaults.standard.string(forKey: "speechRate") ?? "Medium") ?? .medium
         
+        synthesizer.stopSpeaking(at: .immediate)
+
         for (index, component) in components.enumerated() {
             let utterance = AVSpeechUtterance(string: component.trimmingCharacters(in: .whitespaces))
             utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-            utterance.rate = 0.5
+            utterance.rate = speechRate.rateValue
             utterance.pitchMultiplier = 1.0
             
             if index < components.count - 1 {
-                utterance.postUtteranceDelay = 0.3
+                utterance.postUtteranceDelay = speechRate.phrasePause
             }
             
             synthesizer.speak(utterance)
